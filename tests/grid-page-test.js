@@ -1,6 +1,6 @@
 // spec.js
-var searchJsonData = require('./search-json-data.json');
-var searchJsonDataNoRecords = require('./search-json-data-no-records.json');
+var searchJsonData = require('./TestData/search-json-data.json');
+var searchJsonDataNoRecords = require('./TestData/search-json-data-no-records.json');
 var gridPageObjects = require('./grid-page-object.js');
 
 beforeAll(async function () {
@@ -13,7 +13,7 @@ beforeEach(async function () {
 describe('Search', function () {
     it('should return data in grid area', async function () {
         for (var i = 0; i <= 3; i++) {
-            await gridPageObjects.searchInAllColumns(searchJsonData[i]);
+            await gridPageObjects.setInputValue(0, searchJsonData[i]);
             await expect(gridPageObjects.getContactDetails()).toContain(searchJsonData[i]);
             await gridPageObjects.clearSreachField();
         };
@@ -21,7 +21,7 @@ describe('Search', function () {
 
     it('should Not return data in grid area', async function () {
         for (var i = 0; i <= 1; i++) {
-            await gridPageObjects.searchInAllColumns(searchJsonDataNoRecords[i]);
+            await gridPageObjects.setInputValue(0, searchJsonDataNoRecords[i]);
             await expect(gridPageObjects.getContactDetails()).toContain('No records available.');
             await expect(gridPageObjects.getGridItems()).toEqual(['0 - 0 of 0 items']);
             await expect(gridPageObjects.getContactDetails().count()).toEqual(1);
@@ -47,7 +47,7 @@ describe('Checkbox', function () {
 
 describe('Sort', function () {
     it('should sort by job title', async function () {
-        await gridPageObjects.searchInAllColumns('meg');
+        await gridPageObjects.setInputValue(0, 'meg');
         await expect(gridPageObjects.getRowsNumber()).toEqual(2);
         await expect(gridPageObjects.getjobTitle(1)).toEqual(['Operator', 'Librarian']);
         await gridPageObjects.pressSortColumn(1);
@@ -55,6 +55,14 @@ describe('Sort', function () {
     });
 });
 
-
+describe('Filter', function () {
+    it('should filter by ContactName', async function () {
+        await gridPageObjects.pressMenuButton(0);
+        await gridPageObjects.pressFilterButton();
+        await gridPageObjects.setInputValue(1, 'meg');
+        await gridPageObjects.pressApplyFilterButton();
+        await expect(gridPageObjects.getRowsNumber()).toEqual(2);
+    });
+});
 
 

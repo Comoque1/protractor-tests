@@ -2,37 +2,66 @@ var GridPageObjects = function () {
 
     // Search objects
 
-    // Sets value in search field 
-    var searchInput = element(by.css('input.k-textbox'));
-    this.searchInAllColumns = async function (name) {
-        await searchInput.sendKeys(name);
-    }
+    // Sets value in all input fields
+    // Note 1: the parameter "inputNumber" is the index of the input filed, starting from 0
+    // Note 2: the parameter "text" is the text for the input
+    var inputValue = element.all(by.css('input.k-textbox'));
+    this.setInputValue = async function (inputNumber, text) {
+        await inputValue.get(inputNumber).sendKeys(text);
+    };
 
     // Clears search input field
-    this.clearSreachField = async function(){
-        await searchInput.clear();
+    this.clearSreachField = async function () {
+        await inputValue.clear();
     }
 
+    //------------------------------------
     // Checkbox objects 
-    // Note 1: the parameter "val" is the index of the checkbox starting from 0
+
+    // Note 1: the parameter "index" of the checkbox, starting from 0
     // Note 2: index 0 is "select all" checkbox 
     var gridCheckbox = element.all(by.css('kendo-grid .k-checkbox'));
-    this.setGridCheckbox = async function (val) {
-        await gridCheckbox.get(val).click();
+    this.setGridCheckbox = async function (index) {
+        await gridCheckbox.get(index).click();
     }
 
     // Get the state of the checkbox 
-    // Note 1: use the same "val" as in the "setGridCheckbox" function
-    // Note 2: index 0 is "select all" checkbox
+    // Note 1: use the same "index" as in the "setGridCheckbox" function
+    // Note 2: "index" 0 is "select all" checkbox
     this.checkStateGridCheckbox = function (val) {
         return gridCheckbox.get(val);
     }
 
+    //------------------------------------
+    //Filter objects
+
+    // Opens Filter menu 
+    // Note 1: the parameter "val" is the index of the filter menu button starting from 0
+    var menuButton = element.all(by.css('kendo-grid-column-menu .k-grid-filter'));
+    this.pressMenuButton = async function (val) {
+        await menuButton.get(val).click();
+    };
+
+    // Opens Filter options
+    var filterButton = element(by.css('kendo-grid-columnmenu-filter .k-columnmenu-item'));
+    this.pressFilterButton = async function () {
+        await filterButton.click();
+    };
+
+    // Applies Filter options
+    var applyFilterButton = element(by.css('.k-filter-menu-container .k-primary'));
+    this.pressApplyFilterButton = async function () {
+        await applyFilterButton.click();
+    };   
+
+    //------------------------------------
+    // Grid objects
+
     // Sorts grid column. 
-    // Note 1: the parameter "val" is the number of the column starting from 0
+    // Note 1: the parameter "index" of the column, starting from 0
     var sortColumn = element.all(by.css('th span.k-link'));
-    this.pressSortColumn = async function (val) {
-        await sortColumn.get(val).click();
+    this.pressSortColumn = async function (index) {
+        await sortColumn.get(index).click();
     }
 
     // Gets number of rows from grid
@@ -59,7 +88,9 @@ var GridPageObjects = function () {
         return gridItems.getText();
     }
 
+    //------------------------------------
     // Exports objects
+    
     var fileName = ('Employees.xlsx');
     var exportExcel = element(by.css('kendo-grid .k-grid-excel'));
 }
